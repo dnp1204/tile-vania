@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
 	[SerializeField] float runSpeed = 5f;
+	[SerializeField] float jumpSpped = 5f;
 
 	Rigidbody2D myRigidBody;
 	Animator myAnimator;
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour {
 	void Update() {
 		Run();
 		FlipSprite();
+		Jump();
 	}
 
 	private void Run() {
@@ -26,6 +28,13 @@ public class Player : MonoBehaviour {
 
 		bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
 		myAnimator.SetBool("Running", playerHasHorizontalSpeed);
+	}
+
+	private void Jump() {
+		if (Input.GetButtonDown("Jump")) {
+			Vector2 jumpVelocityToAdd = new Vector2(0f, jumpSpped);
+			myRigidBody.velocity += jumpVelocityToAdd;
+		}
 	}
 
 	private void FlipSprite() {
