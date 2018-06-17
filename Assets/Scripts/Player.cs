@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+	// Config
 	[SerializeField] float runSpeed = 5f;
 	[SerializeField] float jumpSpped = 5f;
 	[SerializeField] float climbSpeed = 5f;
+	[SerializeField] Vector2 deathKick = new Vector2(25f, 25f);
 
+	// State
+	bool isAlive = true;
+
+	// Cached component references
 	Rigidbody2D myRigidBody;
 	Animator myAnimator;
 	CapsuleCollider2D myBodyCollider;
@@ -23,9 +29,14 @@ public class Player : MonoBehaviour {
 	}
 
 	void Update() {
+		if (!isAlive) {
+			return;
+		}
+
 		Run();
 		Jump();
 		ClimbLadder();
+		Die();
 		FlipSprite();
 	}
 
@@ -63,6 +74,14 @@ public class Player : MonoBehaviour {
 
 		bool playerHasVerticalSpeed = Mathf.Abs(myRigidBody.velocity.y) > Mathf.Epsilon;
 		myAnimator.SetBool("Climbing", playerHasVerticalSpeed);
+	}
+
+	void Die() {
+		if (myBodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemy"))) {
+			isAlive = false;
+			myAnimator.SetTrigger("Dying");
+			GetComponent<Rigidbody2D>().velocity = deathKick;
+		}
 	}
 
 	void FlipSprite() {
